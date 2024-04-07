@@ -14,7 +14,7 @@ This repository contains an API for email-based one-time password (OTP) generati
 1. Clone this repository:
 
     ```bash
-    git clone https://github.com/rishitgupta203/EmailOTP_LinkVerification-API.git
+    git clone https://github.com/rishitgupta2003/EmailOTP_LinkVerification-API.git
     ```
 
 2. Install dependencies:
