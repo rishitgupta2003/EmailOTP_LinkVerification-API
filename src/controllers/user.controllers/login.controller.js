@@ -3,6 +3,7 @@ import { ApiError } from "../../utils/ApiError.js";
 import { ApiResponse } from "../../utils/ApiResponse.js";
 import { asyncHandler } from "../../utils/asyncHandler.js";
 import jwt from "jsonwebtoken";
+import { mailUser } from "../../utils/nodeMailer.js";
 
 function getRandomInt(max) {
     return Math.floor(Math.random() * max);
@@ -16,7 +17,7 @@ const loginUser = asyncHandler(
                 "email":email,
                 "password":password
             }
-        ).select("-password -verificationCode");
+        ).select("-password");
 
         if(!user) throw new ApiError(404, "User Doesn't Exist");
 
@@ -40,7 +41,14 @@ const loginUser = asyncHandler(
 
                 if(!token) throw new ApiError(500, "Request Token Again");
 
-            const message = `Verify your Email -> OTP : ${verificationCode} OR Click on the link given -> http://localhost:${process.env.PORT}/api/v1/users/verifyToken?token=${token}`;
+            const message = `<div style="font-family: Arial, sans-serif; padding: 20px;">
+            <p style="font-size: 16px;">Verify your Email:</p>
+            <p style="font-size: 16px;">OTP: ${verificationCode}</p>
+            <p style="font-size: 16px;">OR Click on the button below:</p>
+            <a href="http://localhost:${process.env.PORT}/api/v1/users/verifyToken?token=${token}" style="display: inline-block; background-color: #007bff; color: #fff; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-size: 16px; margin-top: 10px;">Verify Email</a>
+        </div>`;
+            
+            mailUser(email, "Verify Your Account", message);
 
             return res.status(300).json(
                 new ApiResponse(
